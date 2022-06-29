@@ -1,2 +1,2 @@
-# C-neuralNetwork
+# C语言神经网络编程
 大学课程大作业
