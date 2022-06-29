@@ -1,7 +1,7 @@
 /***************
-//CÓïÑÔÉñ¾­ÍøÂç±à³Ì 
-//×÷Õß£º¹ùÎÄê» 
-//Ê±¼ä£º2011.6.28 
+//Cè¯­è¨€ç¥ç»ç½‘ç»œç¼–ç¨‹ 
+//ä½œè€…ï¼šgwh 
+//æ—¶é—´ï¼š2011.6.28 
 ***************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,26 +9,26 @@
 #include <time.h>
 #include <string.h>
 
-const int inputnodes=784;//ÉèÖÃÊäÈë²ã½Úµã¸öÊı 
-const int hiddennodes=200;//ÉèÖÃÒş²Ø²ã½Úµã¸öÊı 
-const int outputnodes=10;//ÉèÖÃÊä³ö²ã½Úµã¸öÊı 
-double learningrate=0.1;//ÉèÖÃÑ§Ï°ÂÊ 
-int epochs=3;//ÉèÖÃÑ§Ï°ÂÖ´ÎÊı 
+const int inputnodes=784;//è®¾ç½®è¾“å…¥å±‚èŠ‚ç‚¹ä¸ªæ•° 
+const int hiddennodes=200;//è®¾ç½®éšè—å±‚èŠ‚ç‚¹ä¸ªæ•° 
+const int outputnodes=10;//è®¾ç½®è¾“å‡ºå±‚èŠ‚ç‚¹ä¸ªæ•° 
+double learningrate=0.1;//è®¾ç½®å­¦ä¹ ç‡ 
+int epochs=3;//è®¾ç½®å­¦ä¹ è½®æ¬¡æ•° 
 
-char train_file[100]="C:\\Users\\gwh_0\\Desktop\\mnist_dataset\\mnist_train.csv";//ÉèÖÃÑµÁ·ÎÄ¼şµØÖ· 
-char test_file[100]="C:\\Users\\gwh_0\\Desktop\\mnist_dataset\\mnist_test.csv";//ÉèÖÃ²âÊÔÎÄ¼şµØÖ· 
+char train_file[100]="C:\\Users\\gwh_0\\Desktop\\mnist_dataset\\mnist_train.csv";//è®¾ç½®è®­ç»ƒæ–‡ä»¶åœ°å€ 
+char test_file[100]="C:\\Users\\gwh_0\\Desktop\\mnist_dataset\\mnist_test.csv";//è®¾ç½®æµ‹è¯•æ–‡ä»¶åœ°å€ 
 
 double wih[hiddennodes][inputnodes];
 double who[outputnodes][hiddennodes];
 int iepochs=0;
 
-//Éú³ÉÈ¨ÖØ¾ØÕó£¬²¢½«¾ØÕóµÄÖµ¸³Îª-0.5~0.5Ö®¼ä 
+//ç”Ÿæˆæƒé‡çŸ©é˜µï¼Œå¹¶å°†çŸ©é˜µçš„å€¼èµ‹ä¸º-0.5~0.5ä¹‹é—´ 
 void matrix_init(){
 	for (int i = 0; i < hiddennodes; i++)
 	    {
 	        for (int j = 0; j < inputnodes; j++)
 	        {
-	            srand((unsigned)time(NULL)+(unsigned)rand());//ÖØĞÂÉú³ÉÖÖ×Ó 
+	            srand((unsigned)time(NULL)+(unsigned)rand());//é‡æ–°ç”Ÿæˆç§å­ 
 				wih[i][j]=((rand()%32768)/32767.0)-0.5;
 //				printf("%f ",wih[i][j]);
 	        }
@@ -37,29 +37,29 @@ void matrix_init(){
 	    {
 	        for (int j = 0; j < hiddennodes; j++)
 	        {
-	            srand((unsigned)time(NULL)+(unsigned)rand());//ÖØĞÂÉú³ÉÖÖ×Ó 
+	            srand((unsigned)time(NULL)+(unsigned)rand());//é‡æ–°ç”Ÿæˆç§å­ 
 				who[i][j]=((rand()%32768)/32767.0)-0.5;
 //				printf("%f ",who[i][j]);
 	        }
 	    }
 }
 
-//Éñ¾­ÍøÂçÑµÁ·º¯Êı£¬´«ÈëÑµÁ·ÎÄ¼şµØÖ·£¬º¯Êı½«Íê³ÉÍøÂçÑµÁ· 
+//ç¥ç»ç½‘ç»œè®­ç»ƒå‡½æ•°ï¼Œä¼ å…¥è®­ç»ƒæ–‡ä»¶åœ°å€ï¼Œå‡½æ•°å°†å®Œæˆç½‘ç»œè®­ç»ƒ 
 void train(char *filename){
 	FILE *fp = fopen(filename,"r");
-	int line=10000;//¶¨ÒåÒ»ĞĞ×î´óµÄ×Ö·ûÊı 
+	int line=10000;//å®šä¹‰ä¸€è¡Œæœ€å¤§çš„å­—ç¬¦æ•° 
 	char c[line];
 	
-//	Í³¼ÆcsvÎÄ¼şĞĞÊı
+//	ç»Ÿè®¡csvæ–‡ä»¶è¡Œæ•°
 	long file_row=0;
 	fseek(fp,0,SEEK_SET);
 	while(fgets(c,line,fp) != NULL){
 //	    printf("%s", c);
 	    file_row++;
 	    }
-//	printf("ĞĞÊı = %d\n",file_row);
+//	printf("è¡Œæ•° = %d\n",file_row);
 	
-//	Í³¼ÆcsvÎÄ¼şÁĞÊı
+//	ç»Ÿè®¡csvæ–‡ä»¶åˆ—æ•°
 	long file_column=1;
 	fseek(fp,0,SEEK_SET);
 	fgets(c,line,fp);
@@ -68,30 +68,30 @@ void train(char *filename){
 		file_column++;
 		p++;
 	}
-//	printf("ÁĞÊı = %d\n",file_column);
+//	printf("åˆ—æ•° = %d\n",file_column);
 
-//	ÑµÁ·Éñ¾­ÍøÂç 
+//	è®­ç»ƒç¥ç»ç½‘ç»œ 
 	int target;
 	char *temp=NULL;
 	fseek(fp,0,SEEK_SET);
 	double input_list[inputnodes][1],target_list[outputnodes][1];
 	
-	printf("Ñ§Ï°ÂÊ£º%.2f\n",learningrate);
-	printf("µÚ%dÂÖ£¬¹²%dÂÖ ",iepochs+1,epochs);
-	printf("½ø¶È£º[%.2lf%%]\n",0/file_row);
+	printf("å­¦ä¹ ç‡ï¼š%.2f\n",learningrate);
+	printf("ç¬¬%dè½®ï¼Œå…±%dè½® ",iepochs+1,epochs);
+	printf("è¿›åº¦ï¼š[%.2lf%%]\n",0/file_row);
 
 	
 	for(int i=0,r=0;i<file_row;i++){
-//	    Êä³ö½ø¶È 
+//	    è¾“å‡ºè¿›åº¦ 
 		if((r%(file_row/10)) == 0){
 			system("cls");
-			printf("Ñ§Ï°ÂÊ£º%.2f\n",learningrate);
+			printf("å­¦ä¹ ç‡ï¼š%.2f\n",learningrate);
 			for(int i=0;i<iepochs;i++){
-				printf("µÚ%dÂÖ ",i+1);
-	    		printf("½ø¶È£º[%.2lf%%]\n",100.0);
+				printf("ç¬¬%dè½® ",i+1);
+	    		printf("è¿›åº¦ï¼š[%.2lf%%]\n",100.0);
 			}
-			printf("µÚ%dÂÖ£¬¹²%dÂÖ ",iepochs+1,epochs); 
-	    	printf("½ø¶È£º[%.2lf%%]\n",r*100.0/file_row);
+			printf("ç¬¬%dè½®ï¼Œå…±%dè½® ",iepochs+1,epochs); 
+	    	printf("è¿›åº¦ï¼š[%.2lf%%]\n",r*100.0/file_row);
 	    }
 	    r++;
 	    fgets(c,line,fp);
@@ -110,7 +110,7 @@ void train(char *filename){
 	   		temp=strstr(p,",");
 			if(temp!=NULL){
 				*temp=0;
-//				½«Êı¾İ×ª»»Îª0.01µ½1µÄ·¶Î§ 
+//				å°†æ•°æ®è½¬æ¢ä¸º0.01åˆ°1çš„èŒƒå›´ 
 				input_list[k][0]=(atof(p)/255.0*0.99)+0.01;
 				p+=strlen(p)+1;
 			}
@@ -156,7 +156,7 @@ void train(char *filename){
 				output_errors[i][j]=target_list[i][j]-final_outputs[i][j];
 			}
 		}
-//		who×ªÖÃ [200,10]
+//		whoè½¬ç½® [200,10]
 		for(int i=0;i<hiddennodes;i++){
 	    	for(int j=0;j<outputnodes;j++){
 	    		whoT[i][j]=who[j][i];
@@ -172,7 +172,7 @@ void train(char *filename){
 	        }
 	    }
 	    
-//	    ¸üĞÂÈ¨ÖØ¾ØÕówho 
+//	    æ›´æ–°æƒé‡çŸ©é˜µwho 
 	    double m1[outputnodes][1];
 	    double hidden_outputsT[1][200];
 	    for(int i=0;i<outputnodes;i++){
@@ -194,7 +194,7 @@ void train(char *filename){
 	        }
 	    }
 	    
-//	    ¸üĞÂÈ¨ÖØ¾ØÕówih
+//	    æ›´æ–°æƒé‡çŸ©é˜µwih
 		double m2[hiddennodes][1];
 	    double input_listT[1][784];
 	    for(int i=0;i<hiddennodes;i++){
@@ -216,31 +216,31 @@ void train(char *filename){
 	    }
 	}
 	system("cls");
-	printf("Ñ§Ï°ÂÊ£º%.2f\n",learningrate);
+	printf("å­¦ä¹ ç‡ï¼š%.2f\n",learningrate);
 	for(int i=0;i<iepochs+1;i++){
-		printf("µÚ%dÂÖ ",i+1);
-		printf("½ø¶È£º[%.2lf%%]\n",100.0);
+		printf("ç¬¬%dè½® ",i+1);
+		printf("è¿›åº¦ï¼š[%.2lf%%]\n",100.0);
 	}
 	
 	fclose(fp);
 }
 
-//¸ù¾İÑù±¾Êı¾İÕıÏò¼ÆËãÍøÂç£¬µÃµ½Éñ¾­ÍøÂçÕıÈ·ÂÊ 
+//æ ¹æ®æ ·æœ¬æ•°æ®æ­£å‘è®¡ç®—ç½‘ç»œï¼Œå¾—åˆ°ç¥ç»ç½‘ç»œæ­£ç¡®ç‡ 
 void query(char *filename){
 	FILE *fp = fopen(filename,"r");
-	int line=10000;//¶¨ÒåÒ»ĞĞ×î´óµÄ×Ö·ûÊı 
+	int line=10000;//å®šä¹‰ä¸€è¡Œæœ€å¤§çš„å­—ç¬¦æ•° 
 	char c[line];
 	
-//	Í³¼ÆcsvÎÄ¼şĞĞÊı 
+//	ç»Ÿè®¡csvæ–‡ä»¶è¡Œæ•° 
 	long file_row=0;
 	fseek(fp,0,SEEK_SET);
 	while(fgets(c,line,fp) != NULL){
 //	    printf("%s", c);
 	    file_row++;
 	    }
-//	printf("ĞĞÊı = %d\n",file_row);
+//	printf("è¡Œæ•° = %d\n",file_row);
 	
-//	Í³¼ÆcsvÎÄ¼şÁĞÊı 
+//	ç»Ÿè®¡csvæ–‡ä»¶åˆ—æ•° 
 	long file_column=1;
 	fseek(fp,0,SEEK_SET);
 	fgets(c,line,fp);
@@ -249,9 +249,9 @@ void query(char *filename){
 		file_column++;
 		p++;
 	}
-//	printf("ÁĞÊı = %d\n",file_column);
+//	printf("åˆ—æ•° = %d\n",file_column);
 
-//	ÕıÏò¼ÆËãÉñ¾­ÍøÂç 
+//	æ­£å‘è®¡ç®—ç¥ç»ç½‘ç»œ 
 	int target;
 	char *temp=NULL;
 	fseek(fp,0,SEEK_SET);
@@ -271,7 +271,7 @@ void query(char *filename){
 	   		temp=strstr(p,",");
 			if(temp!=NULL){
 				*temp=0;
-//				½«Êı¾İ×ª»»Îª0.01µ½1µÄ·¶Î§ 
+//				å°†æ•°æ®è½¬æ¢ä¸º0.01åˆ°1çš„èŒƒå›´ 
 				input_list[k][0]=(atof(p)/255.0*0.99)+0.01;
 				p+=strlen(p)+1;
 			}
@@ -328,7 +328,7 @@ void query(char *filename){
 	}
 	double performance=0;
 	performance=score*1.0/file_row;
-	printf("ÕıÈ·ÂÊ:%.2lf%%",performance*100.0);
+	printf("æ­£ç¡®ç‡:%.2lf%%",performance*100.0);
 	
 	fclose(fp);
 }
